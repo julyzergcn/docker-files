@@ -1,0 +1,32 @@
+# docker-compose up -d
+# dcom exec php bash
+version: "3.8"
+
+volumes:
+  mysql-data:
+
+services:
+  mysql:
+    image: mysql:8.0
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_DATABASE: db_name
+  php:
+    image: php-image
+    depends_on:
+     - mysql
+    ports:
+      - 8000:8000
+    working_dir: /app
+    volumes:
+      - ./:/app
+    environment:
+      - DB_DATABASE=db_name
+      - DB_PASSWORD=pass
+      - DB_HOST=mysql
+    # entrypoint: php artisan serve --host 0.0.0.0
+    entrypoint: php -S 0.0.0.0:8000
