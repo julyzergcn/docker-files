@@ -1,0 +1,24 @@
+# docker dev laravel
+
+docker network create my-net
+
+docker run -it --name composer \
+  --network=my-net  -p 8000:8000 \
+  -v "$(pwd):/app" composer bash
+
+
+docker exec -it composer bash
+docker-php-ext-install pdo_mysql
+
+
+docker run -d --name=mysql \
+  --network=my-net --network-alias=mysql \
+  -v mysql-data:/var/lib/mysql \
+  -e MYSQL_ROOT_PASSWORD=pass mysql:5.7
+
+
+docker run -d --name=adminer \
+  -p 8080:8080 \
+  --network=my-net \
+  -e ADMINER_DEFAULT_SERVER=mysql adminer
+
